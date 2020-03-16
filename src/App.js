@@ -1,5 +1,5 @@
 //TODO: STEP 1 - Import the useState hook.
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import "./App.css";
 import BottomRow from "./BottomRow";
 
@@ -8,8 +8,29 @@ function App() {
    const [homescore, setHomescore] = useState(0);
    const [awayscore, setAwayscore] = useState(0);
    const [quarter, setQuarter] = useState(0);
-  //  const [seconds, setSeconds] = useState(0);
-  //  const [isActive, setIsActive] = useState(false);
+   const [seconds, setSeconds] = useState(0);
+   const [isActive, setIsActive] = useState(false);
+
+   function toggle() {
+     setIsActive(!isActive)
+   }
+
+   function reset() {
+     setSeconds(0)
+     setIsActive(false)
+   }
+
+   useEffect(() => {
+     let interval = null
+     if (isActive) {
+       interval = setInterval(() => {
+         setSeconds(seconds => seconds +1)
+       }, 1000)
+     } else if (!isActive && seconds !== 0) {
+       clearInterval(interval)
+     }
+     return () => clearInterval(interval)
+   }, [isActive, seconds])
 
   return (
  
@@ -23,7 +44,7 @@ function App() {
 
             <div className="home__score">{homescore}</div>
           </div>
-          <div className="timer">00:03</div>
+          <div className="timer">{seconds}</div>
           <div className="away">
             <h2 className="away__name">Tigers</h2>
             <div className="away__score">{awayscore}</div>
@@ -43,8 +64,8 @@ function App() {
         </div>
         <div className="homeButtons">
           <button className="homeButtons__touchdown" onClick={() => setQuarter(quarter + 1)}>Quarter</button>
-          {/* <button className='homeButtons__touchdown' onClick={isActive ? 'Pause' : 'Start'}>Start</button>
-          <button className='homeButtons__touchdown'>Reset</button> */}
+          <button className='homeButtons__touchdown' onClick={toggle}>{isActive ? 'Pause' : 'Start'}</button>
+          <button className='homeButtons__touchdown' onClick={reset}>Reset</button>
         </div>
       </section>
     </div>
